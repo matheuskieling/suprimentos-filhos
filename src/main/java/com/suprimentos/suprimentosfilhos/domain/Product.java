@@ -1,8 +1,7 @@
 package com.suprimentos.suprimentosfilhos.domain;
 
-import com.suprimentos.suprimentosfilhos.dto.ProductDTO;
+import com.suprimentos.suprimentosfilhos.dto.request.ProductRequestDTO;
 import jakarta.persistence.*;
-import lombok.*;
 
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
@@ -35,9 +34,13 @@ public class Product {
     @Column(nullable = false)
     private Integer notificationWindowInDays;
 
+    @JoinColumn(nullable = false, name="user_id")
+    @ManyToOne
+    private User user;
+
     public Product() {}
 
-    public Product(Long id, Integer quantity, Integer quantityUsedPerDay, String unit, Date endsIn, String name, String imgPath, Date openedOn, Integer notificationWindowInDays) {
+    public Product(Long id, Integer quantity, Integer quantityUsedPerDay, String unit, Date endsIn, String name, String imgPath, Date openedOn, Integer notificationWindowInDays, User user) {
         this.id = id;
         this.quantity = quantity;
         this.quantityUsedPerDay = quantityUsedPerDay;
@@ -47,15 +50,7 @@ public class Product {
         this.imgPath = imgPath;
         this.openedOn = openedOn;
         this.notificationWindowInDays = notificationWindowInDays;
-    }
-
-    public Product(ProductDTO productDTO) {
-        this.name = productDTO.name();
-        this.imgPath = productDTO.imgPath();
-        this.unit = productDTO.unit();
-        this.quantity = productDTO.quantity();
-        this.quantityUsedPerDay = productDTO.quantityUsedPerDay();
-        this.notificationWindowInDays = productDTO.notificationWindowInDays();
+        this.user = user;
     }
 
     public void open() {
@@ -64,12 +59,12 @@ public class Product {
         this.endsIn = Date.from(this.openedOn.toInstant().plus(daysBeforeEnding, ChronoUnit.DAYS));
     }
 
-    public void update(ProductDTO productDTO) {
-        this.name = productDTO.name();
-        this.imgPath = productDTO.imgPath();
-        this.unit = productDTO.unit();
-        this.quantity = productDTO.quantity();
-        this.quantityUsedPerDay = productDTO.quantityUsedPerDay();
+    public void update(ProductRequestDTO productRequestDTO) {
+        this.name = productRequestDTO.name();
+        this.imgPath = productRequestDTO.imgPath();
+        this.unit = productRequestDTO.unit();
+        this.quantity = productRequestDTO.quantity();
+        this.quantityUsedPerDay = productRequestDTO.quantityUsedPerDay();
     }
 
     public Long getId() {
@@ -142,5 +137,13 @@ public class Product {
 
     public void setNotificationWindowInDays(Integer notificationWindowInDays) {
         this.notificationWindowInDays = notificationWindowInDays;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

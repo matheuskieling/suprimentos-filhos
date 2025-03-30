@@ -1,7 +1,7 @@
 package com.suprimentos.suprimentosfilhos.controller;
 
 import com.suprimentos.suprimentosfilhos.domain.Product;
-import com.suprimentos.suprimentosfilhos.dto.ProductDTO;
+import com.suprimentos.suprimentosfilhos.dto.request.ProductRequestDTO;
 import com.suprimentos.suprimentosfilhos.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,14 +24,14 @@ public class ProductController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<Product> saveProduct(@RequestBody ProductDTO productDTO) {
-        Product savedProduct = this.productService.saveProduct(productDTO);
+    public ResponseEntity<Product> saveProduct(@RequestBody ProductRequestDTO productRequestDTO) {
+        Product savedProduct = this.productService.saveProduct(productRequestDTO);
         return new ResponseEntity<>(savedProduct, HttpStatus.CREATED);
     }
 
     @PutMapping("/updateProduct")
-    public ResponseEntity<Product> updateProduct(@RequestBody ProductDTO productDTO) {
-        Product updatedProduct = this.productService.updateProduct(productDTO);
+    public ResponseEntity<Product> updateProduct(@RequestBody ProductRequestDTO productRequestDTO) {
+        Product updatedProduct = this.productService.updateProduct(productRequestDTO);
         return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
     }
 

@@ -48,7 +48,7 @@ public class ProductService {
     }
 
     public Product updateProduct(ProductRequestDTO dto) {
-        Product product = this.productRepository.findById(dto.id()).orElseThrow(() -> new RuntimeException("Produto encontrado"));
+        Product product = this.productRepository.findById(dto.id()).orElseThrow(() -> new RuntimeException("Produto não encontrado"));
         product.update(dto);
         return this.productRepository.save(product);
     }

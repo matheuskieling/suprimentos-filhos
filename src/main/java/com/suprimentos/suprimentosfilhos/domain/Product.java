@@ -3,6 +3,8 @@ package com.suprimentos.suprimentosfilhos.domain;
 import com.suprimentos.suprimentosfilhos.dto.request.ProductRequestDTO;
 import jakarta.persistence.*;
 
+import java.time.Instant;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
@@ -31,12 +33,15 @@ public class Product {
 
     private Date openedOn;
 
+    private Date notificationDate;
+
     @Column(nullable = false)
     private Integer notificationWindowInDays;
 
     @JoinColumn(nullable = false, name="user_id")
     @ManyToOne
     private User user;
+
 
     public Product() {}
 
@@ -57,6 +62,7 @@ public class Product {
         this.openedOn = new Date();
         Integer daysBeforeEnding = this.quantity / this.quantityUsedPerDay;
         this.endsIn = Date.from(this.openedOn.toInstant().plus(daysBeforeEnding, ChronoUnit.DAYS));
+        this.setNotificationDate();
     }
 
     public void update(ProductRequestDTO productRequestDTO) {
@@ -65,6 +71,11 @@ public class Product {
         this.unit = productRequestDTO.unit();
         this.quantity = productRequestDTO.quantity();
         this.quantityUsedPerDay = productRequestDTO.quantityUsedPerDay();
+
+        if (productRequestDTO.notificationWindowInDays() != this.notificationWindowInDays && this.endsIn != null) {
+            this.notificationWindowInDays = productRequestDTO.notificationWindowInDays();
+            this.setNotificationDate();
+        }
     }
 
     public Long getId() {
@@ -145,5 +156,22 @@ public class Product {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Date getNotificationDate() {
+        return notificationDate;
+    }
+
+    public void setNotificationDate() {
+        Instant instant = this.endsIn.toInstant().minus(this.notificationWindowInDays, ChronoUnit.DAYS);
+        ZoneId zoneId = ZoneId.systemDefault();
+
+        Instant startOfDay = instant
+                .atZone(zoneId)
+                .toLocalDate()
+                .atStartOfDay(zoneId)
+                .toInstant();
+
+        this.notificationDate = Date.from(startOfDay);
     }
 }

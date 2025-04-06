@@ -18,7 +18,6 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-
     @GetMapping("/{id}")
     private ResponseEntity<UserResponseDTO> getUserById(@PathVariable UUID id) {
         User user = this.userService.findById(id);
@@ -26,12 +25,6 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(user.toResponseDTO(), HttpStatus.OK);
-    }
-
-    @PostMapping
-    private ResponseEntity<UserResponseDTO> createUser(@RequestBody UserRequestDTO userDTO) {
-        User user = this.userService.createUser(userDTO);
-        return new ResponseEntity<>(user.toResponseDTO(), HttpStatus.CREATED);
     }
 
     @PutMapping("update")

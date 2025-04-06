@@ -1,6 +1,6 @@
 package com.suprimentos.suprimentosfilhos.infra.security;
 
-import com.suprimentos.suprimentosfilhos.Repository.UserRepository;
+import com.suprimentos.suprimentosfilhos.repository.UserRepository;
 import com.suprimentos.suprimentosfilhos.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

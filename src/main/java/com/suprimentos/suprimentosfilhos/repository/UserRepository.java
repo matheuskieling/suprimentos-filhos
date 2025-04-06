@@ -1,4 +1,4 @@
-package com.suprimentos.suprimentosfilhos.Repository;
+package com.suprimentos.suprimentosfilhos.repository;
 
 import com.suprimentos.suprimentosfilhos.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;

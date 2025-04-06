@@ -7,8 +7,9 @@ CREATE TABLE users (
 
 CREATE TABLE product (
     id SERIAL PRIMARY KEY,
-    quantity BIGINT NOT NULL,
-    quantity_used_per_day BIGINT NOT NULL,
+    quantity INT NOT NULL,
+    left_quantity INT NOT NULL,
+    quantity_used_per_day INT NOT NULL,
     unit VARCHAR(50) NOT NULL,
     ends_in TIMESTAMP,
     name VARCHAR(255) NOT NULL,

@@ -26,6 +26,13 @@ public class Product {
 
     private Date endsIn;
 
+
+    public void setLeftQuantity(Integer leftQuantity) {
+        this.leftQuantity = leftQuantity;
+    }
+
+    private Integer leftQuantity;
+
     @Column(nullable = false)
     private String name;
 
@@ -52,6 +59,7 @@ public class Product {
         this.unit = unit;
         this.endsIn = endsIn;
         this.name = name;
+        this.leftQuantity = quantity;
         this.imgPath = imgPath;
         this.openedOn = openedOn;
         this.notificationWindowInDays = notificationWindowInDays;
@@ -63,6 +71,11 @@ public class Product {
         Integer daysBeforeEnding = this.quantity / this.quantityUsedPerDay;
         this.endsIn = Date.from(this.openedOn.toInstant().plus(daysBeforeEnding, ChronoUnit.DAYS));
         this.setNotificationDate();
+        this.useProduct();
+    }
+
+    public void useProduct() {
+        this.leftQuantity = Math.max(0, this.leftQuantity - this.quantityUsedPerDay);
     }
 
     public void update(ProductRequestDTO productRequestDTO) {
@@ -173,5 +186,9 @@ public class Product {
                 .toInstant();
 
         this.notificationDate = Date.from(startOfDay);
+    }
+
+    public Integer getLeftQuantity() {
+        return leftQuantity;
     }
 }

@@ -1,6 +1,6 @@
 package com.suprimentos.suprimentosfilhos.service;
 
-import com.suprimentos.suprimentosfilhos.Repository.ProductRepository;
+import com.suprimentos.suprimentosfilhos.repository.ProductRepository;
 import com.suprimentos.suprimentosfilhos.domain.Product;
 import com.suprimentos.suprimentosfilhos.domain.User;
 import com.suprimentos.suprimentosfilhos.dto.request.ProductRequestDTO;

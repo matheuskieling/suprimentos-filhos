@@ -1,18 +1,11 @@
 package com.suprimentos.suprimentosfilhos.service;
 
-import com.suprimentos.suprimentosfilhos.Repository.UserRepository;
+import com.suprimentos.suprimentosfilhos.repository.UserRepository;
 import com.suprimentos.suprimentosfilhos.domain.User;
 import com.suprimentos.suprimentosfilhos.dto.request.UserRequestDTO;
-import com.suprimentos.suprimentosfilhos.dto.response.UserResponseDTO;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.UUID;
 
 @Service

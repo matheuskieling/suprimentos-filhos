@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/product")
@@ -17,9 +18,9 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-    @GetMapping
-    public ResponseEntity<List<Product>> getAllProducts() {
-        List<Product> list = this.productService.getAllProducts();
+    @GetMapping("/{userId}")
+    public ResponseEntity<List<Product>> getAllProducts(@PathVariable UUID userId) {
+        List<Product> list = this.productService.getAllProductsForUser(userId);
         return ResponseEntity.ok(list);
     }
 
@@ -41,9 +42,9 @@ public class ProductController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @PutMapping("/open/{id}")
-    public ResponseEntity<Product> openProduct(@PathVariable Long id) {
-        Product product = this.productService.openProduct(id);
+    @PutMapping("/addUnit/{id}")
+    public ResponseEntity<Product> addUnitToProduct(@PathVariable Long id) {
+        Product product = this.productService.addUnit(id);
         return new ResponseEntity<>(product, HttpStatus.OK);
     }
 

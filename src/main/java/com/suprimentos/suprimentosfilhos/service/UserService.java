@@ -19,10 +19,14 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-
     public User findById(UUID id) {
         return this.userRepository.findById(id).orElse(null);
     }
+
+    public User findByEmail(String email) {
+        return this.userRepository.findByEmail(email).orElse(null);
+    }
+
 
     public User createUser(UserRequestDTO userDTO) {
         String hashedPassword = passwordEncoder.encode(userDTO.password());

@@ -1,12 +1,15 @@
 package com.suprimentos.suprimentosfilhos.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.suprimentos.suprimentosfilhos.dto.request.ProductRequestDTO;
 import jakarta.persistence.*;
 
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "product")
@@ -26,19 +29,12 @@ public class Product {
 
     private Date endsIn;
 
-
-    public void setLeftQuantity(Integer leftQuantity) {
-        this.leftQuantity = leftQuantity;
-    }
-
     private Integer leftQuantity;
 
     @Column(nullable = false)
     private String name;
 
     private String imgPath;
-
-    private Date openedOn;
 
     private Date notificationDate;
 
@@ -47,8 +43,12 @@ public class Product {
 
     @JoinColumn(nullable = false, name="user_id")
     @ManyToOne
+    @JsonIgnore
     private User user;
 
+
+    @OneToMany(mappedBy = "product")
+    private List<UnitOfProduct> units;
 
     public Product() {}
 
@@ -61,17 +61,20 @@ public class Product {
         this.name = name;
         this.leftQuantity = quantity;
         this.imgPath = imgPath;
-        this.openedOn = openedOn;
         this.notificationWindowInDays = notificationWindowInDays;
         this.user = user;
+        this.units = new ArrayList<>();
+        UnitOfProduct unitOfProduct = new UnitOfProduct(Date.from(Instant.now()), this);
+        this.units.add(unitOfProduct);
     }
 
-    public void open() {
-        this.openedOn = new Date();
+    public void addUnit() {
+        UnitOfProduct unit = new UnitOfProduct(Date.from(Instant.now()), this);
+        this.units.add(unit);
+        this.leftQuantity += this.quantity;
         Integer daysBeforeEnding = this.quantity / this.quantityUsedPerDay;
-        this.endsIn = Date.from(this.openedOn.toInstant().plus(daysBeforeEnding, ChronoUnit.DAYS));
+        this.endsIn = Date.from(Instant.now().plus(daysBeforeEnding, ChronoUnit.DAYS));
         this.setNotificationDate();
-        this.useProduct();
     }
 
     public void useProduct() {
@@ -147,14 +150,6 @@ public class Product {
         this.imgPath = imgPath;
     }
 
-    public Date getOpenedOn() {
-        return openedOn;
-    }
-
-    public void setOpenedOn(Date openedOn) {
-        this.openedOn = openedOn;
-    }
-
     public Integer getNotificationWindowInDays() {
         return notificationWindowInDays;
     }
@@ -190,5 +185,23 @@ public class Product {
 
     public Integer getLeftQuantity() {
         return leftQuantity;
+    }
+
+    public void setLeftQuantity(Integer leftQuantity) {
+        this.leftQuantity = leftQuantity;
+    }
+
+    public List<UnitOfProduct> getUnits() {
+        return units;
+    }
+
+    public void setUnits(List<UnitOfProduct> units) {
+        this.units = units;
+    }
+
+    public void calculateEndDateAndNotificationDate() {
+        Integer daysUntilProductEnd = this.leftQuantity / this.quantityUsedPerDay;
+        this.endsIn = Date.from(Instant.now().plus(daysUntilProductEnd, ChronoUnit.DAYS));
+        this.notificationDate = Date.from(this.endsIn.toInstant().minus(this.notificationWindowInDays, ChronoUnit.DAYS));
     }
 }

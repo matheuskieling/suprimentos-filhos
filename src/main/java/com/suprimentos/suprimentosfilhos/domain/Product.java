@@ -1,8 +1,10 @@
 package com.suprimentos.suprimentosfilhos.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.suprimentos.suprimentosfilhos.domain.enums.ProductCategory;
 import com.suprimentos.suprimentosfilhos.dto.request.ProductRequestDTO;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 
 import java.time.Instant;
 import java.time.ZoneId;
@@ -12,6 +14,7 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
+@AllArgsConstructor
 @Table(name = "product")
 public class Product {
     @Id
@@ -49,47 +52,32 @@ public class Product {
     @OneToMany(mappedBy = "product")
     private List<UnitOfProduct> units;
 
-    public Product() {}
+    @Enumerated(EnumType.STRING)
+    private ProductCategory category;
 
-    public Product(Long id, Integer quantity, Integer quantityUsedPerDay, String unit, Date endsIn, String name, String imgPath, Integer notificationWindowInDays, User user) {
-        this.id = id;
-        this.quantity = quantity;
-        this.quantityUsedPerDay = quantityUsedPerDay;
-        this.unit = unit;
-        this.endsIn = endsIn;
-        this.name = name;
-        this.leftQuantity = quantity;
-        this.imgPath = imgPath;
-        this.notificationWindowInDays = notificationWindowInDays;
-        this.user = user;
-        this.units = new ArrayList<>();
-        UnitOfProduct unitOfProduct = new UnitOfProduct(Date.from(Instant.now()), this);
-        this.units.add(unitOfProduct);
-    }
+    public Product() {}
 
     public void addUnit(UnitOfProduct unit) {
         this.units.add(unit);
         this.leftQuantity += this.quantity;
-        Integer daysBeforeEnding = this.quantity / this.quantityUsedPerDay;
-        this.endsIn = Date.from(Instant.now().plus(daysBeforeEnding, ChronoUnit.DAYS));
-        this.setNotificationDate();
+        this.calculateEndDateAndNotificationDate();
     }
+
+
 
     public void useProduct() {
         this.leftQuantity = Math.max(0, this.leftQuantity - this.quantityUsedPerDay);
     }
 
     public void update(ProductRequestDTO productRequestDTO) {
+        this.category = productRequestDTO.category();
         this.name = productRequestDTO.name();
         this.imgPath = productRequestDTO.imgPath();
         this.unit = productRequestDTO.unit();
         this.quantity = productRequestDTO.quantity();
         this.quantityUsedPerDay = productRequestDTO.quantityUsedPerDay();
 
-        if (productRequestDTO.notificationWindowInDays() != this.notificationWindowInDays && this.endsIn != null) {
-            this.notificationWindowInDays = productRequestDTO.notificationWindowInDays();
-            this.setNotificationDate();
-        }
+        this.calculateEndDateAndNotificationDate();
     }
 
     public Long getId() {
@@ -129,7 +117,6 @@ public class Product {
     }
 
     public void setEndsIn(Date endsIn) {
-        this.endsIn = endsIn;
     }
 
     public String getName() {
@@ -197,9 +184,17 @@ public class Product {
         this.units = units;
     }
 
+    public ProductCategory getCategory() {
+        return category;
+    }
+
+    public void setCategory(ProductCategory category) {
+        this.category = category;
+    }
+
     public void calculateEndDateAndNotificationDate() {
         Integer daysUntilProductEnd = this.leftQuantity / this.quantityUsedPerDay;
         this.endsIn = Date.from(Instant.now().plus(daysUntilProductEnd, ChronoUnit.DAYS));
-        this.notificationDate = Date.from(this.endsIn.toInstant().minus(this.notificationWindowInDays, ChronoUnit.DAYS));
+        this.setNotificationDate();
     }
 }

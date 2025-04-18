@@ -14,6 +14,7 @@ CREATE TABLE product (
                          ends_in TIMESTAMP,
                          name VARCHAR(255) NOT NULL,
                          img_path VARCHAR(500),
+                         category VARCHAR(50),
                          notification_date TIMESTAMP,
                          notification_window_in_days INTEGER NOT NULL,
                          user_id UUID CONSTRAINT fk_product_users REFERENCES users(id) ON DELETE CASCADE

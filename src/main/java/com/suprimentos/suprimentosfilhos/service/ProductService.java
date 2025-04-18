@@ -7,7 +7,12 @@ import com.suprimentos.suprimentosfilhos.domain.User;
 import com.suprimentos.suprimentosfilhos.dto.request.ProductRequestDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
@@ -38,19 +43,23 @@ public class ProductService {
         }
         Product product = new Product();
         product.setName(dto.name());
+
         product.setImgPath(dto.imgPath());
         product.setUnit(dto.unit());
         product.setQuantity(dto.quantity());
         product.setQuantityUsedPerDay(dto.quantityUsedPerDay());
         product.setNotificationWindowInDays(dto.notificationWindowInDays());
         product.setUser(user);
+        product.setCategory(dto.category());
         product.setLeftQuantity(dto.quantity());
         product.setUnits(new ArrayList<>());
+        product.calculateEndDateAndNotificationDate();
         product = productRepository.save(product);
         UnitOfProduct unit = new UnitOfProduct(Date.from(Instant.now()), product);
         unit = unitOfProductService.saveUnitOfProduct(unit);
         product.getUnits().add(unit);
         product = productRepository.save(product);
+
         return product;
     }
 
@@ -75,4 +84,5 @@ public class ProductService {
         productRepository.save(product);
         return product;
     }
+
 }

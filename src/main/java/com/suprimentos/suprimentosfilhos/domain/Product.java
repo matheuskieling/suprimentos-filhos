@@ -46,13 +46,12 @@ public class Product {
     @JsonIgnore
     private User user;
 
-
     @OneToMany(mappedBy = "product")
     private List<UnitOfProduct> units;
 
     public Product() {}
 
-    public Product(Long id, Integer quantity, Integer quantityUsedPerDay, String unit, Date endsIn, String name, String imgPath, Date openedOn, Integer notificationWindowInDays, User user) {
+    public Product(Long id, Integer quantity, Integer quantityUsedPerDay, String unit, Date endsIn, String name, String imgPath, Integer notificationWindowInDays, User user) {
         this.id = id;
         this.quantity = quantity;
         this.quantityUsedPerDay = quantityUsedPerDay;
@@ -68,8 +67,7 @@ public class Product {
         this.units.add(unitOfProduct);
     }
 
-    public void addUnit() {
-        UnitOfProduct unit = new UnitOfProduct(Date.from(Instant.now()), this);
+    public void addUnit(UnitOfProduct unit) {
         this.units.add(unit);
         this.leftQuantity += this.quantity;
         Integer daysBeforeEnding = this.quantity / this.quantityUsedPerDay;

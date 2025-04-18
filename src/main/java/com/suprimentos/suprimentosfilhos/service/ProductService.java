@@ -66,7 +66,12 @@ public class ProductService {
 
     public Product addUnit(Long id) {
         Product product = this.productRepository.findById(id).orElse(null);
-        product.addUnit();
+        if (product == null) {
+            throw new RuntimeException("Product not found");
+        }
+        UnitOfProduct unit = new UnitOfProduct(Date.from(Instant.now()), product);
+        unit = unitOfProductService.saveUnitOfProduct(unit);
+        product.addUnit(unit);
         productRepository.save(product);
         return product;
     }

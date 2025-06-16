@@ -43,7 +43,7 @@ public class ProductController {
     }
 
     @PutMapping("/addUnit/{id}")
-    public ResponseEntity<Product> addUnitToProduct(@PathVariable Long id) {
+    public ResponseEntity<Product> addUnitToAProduct(@PathVariable Long id) {
         Product product = this.productService.addUnit(id);
         return new ResponseEntity<>(product, HttpStatus.OK);
     }
